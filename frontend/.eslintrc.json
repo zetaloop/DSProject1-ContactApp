@@ -1,3 +1,13 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "overrides": [
+    {
+      "files": ["components/ui/**/*.ts", "components/ui/**/*.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-empty-object-type": "off"
+      }
+    }
+  ]
 }
