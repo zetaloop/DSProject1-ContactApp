@@ -8,12 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader } from "@/components/ui/card";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import { Contact } from "@/types";
+import { ContactType } from "@/types";
 
 interface ContactDetailDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  contact: Contact;
+  contact: ContactType;
 }
 
 const ContactDetailDialog: React.FC<ContactDetailDialogProps> = ({

@@ -19,13 +19,16 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { Contact } from "@/types";
+import { ContactType } from "@/types";
 
 interface ContactFormProps {
   isOpen: boolean;
   onClose: () => void;
-  currentContact: Contact | null;
-  onSave: (contactData: Omit<Contact, "id">, selectedFile: File | null) => void;
+  currentContact: ContactType | null;
+  onSave: (
+    contactData: Omit<ContactType, "id">,
+    selectedFile: File | null
+  ) => void;
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({

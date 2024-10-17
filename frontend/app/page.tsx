@@ -1,9 +1,9 @@
-import ContactList from "../components/contact-list";
+import ContactPage from "../components/contact";
 
 export default function Home() {
   return (
     <div className="container mx-auto p-4">
-      <ContactList />
+      <ContactPage />
     </div>
   );
 }

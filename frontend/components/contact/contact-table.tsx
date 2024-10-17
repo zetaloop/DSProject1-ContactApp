@@ -10,13 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import { Contact } from "@/types";
+import { ContactType } from "@/types";
 
 interface ContactTableProps {
-  contacts: Contact[];
-  onEdit: (contact: Contact) => void;
+  contacts: ContactType[];
+  onEdit: (contact: ContactType) => void;
   onDelete: (id: number) => void;
-  onRowClick: (contact: Contact) => void;
+  onRowClick: (contact: ContactType) => void;
 }
 
 const ContactTable: React.FC<ContactTableProps> = ({

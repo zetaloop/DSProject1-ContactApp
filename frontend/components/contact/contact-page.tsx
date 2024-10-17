@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Contact } from "@/types";
+import { ContactType } from "@/types";
 import ContactTable from "./contact-table";
-import ContactForm from "./contact-form";
-import ContactDetailDialog from "./contact-detail";
+import ContactForm from "./window-edit";
+import ContactDetailDialog from "./window-detail";
 import {
   fetchContacts,
   addContact,
@@ -16,13 +16,17 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
-const ContactList = () => {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+const ContactPage = () => {
+  const [contacts, setContacts] = useState<ContactType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [currentContact, setCurrentContact] = useState<Contact | null>(null);
+  const [currentContact, setCurrentContact] = useState<ContactType | null>(
+    null
+  );
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [detailedContact, setDetailedContact] = useState<Contact | null>(null);
+  const [detailedContact, setDetailedContact] = useState<ContactType | null>(
+    null
+  );
   const { toast } = useToast();
 
   useEffect(() => {
@@ -37,7 +41,7 @@ const ContactList = () => {
     setIsFormOpen(true);
   };
 
-  const handleEdit = (contact: Contact) => {
+  const handleEdit = (contact: ContactType) => {
     setCurrentContact(contact);
     setIsFormOpen(true);
   };
@@ -48,13 +52,13 @@ const ContactList = () => {
     toast({ title: "联系人已删除" });
   };
 
-  const handleRowClick = (contact: Contact) => {
+  const handleRowClick = (contact: ContactType) => {
     setDetailedContact(contact);
     setIsDetailOpen(true);
   };
 
   const handleSave = async (
-    contactData: Omit<Contact, "id">,
+    contactData: Omit<ContactType, "id">,
     selectedFile: File | null
   ) => {
     let pictureUrl;
@@ -85,7 +89,7 @@ const ContactList = () => {
   if (isLoading) {
     return (
       <div className="container mx-auto p-4 space-y-4">
-        <h1 className="text-2xl font-bold mb-4">联系人列表</h1>
+        <h1 className="text-2xl font-bold mb-4">联系人</h1>
         <div className="space-y-4">
           {[...Array(5)].map((_, index) => (
             <div key={index} className="flex items-center space-x-4">
@@ -103,7 +107,7 @@ const ContactList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">联系人列表</h1>
+      <h1 className="text-2xl font-bold mb-4">联系人</h1>
       <Button variant="outline" onClick={handleAdd}>
         添加联系人
       </Button>
@@ -130,4 +134,4 @@ const ContactList = () => {
   );
 };
 
-export default ContactList;
+export default ContactPage;

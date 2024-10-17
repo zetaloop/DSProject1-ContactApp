@@ -1,7 +1,7 @@
-import { Contact } from "@/types";
+import { ContactType } from "@/types";
 
 // Mock API
-export const fetchContacts = (): Promise<Contact[]> => {
+export const fetchContacts = (): Promise<ContactType[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve([
@@ -25,7 +25,9 @@ export const fetchContacts = (): Promise<Contact[]> => {
   });
 };
 
-export const addContact = (contact: Omit<Contact, "id">): Promise<Contact> => {
+export const addContact = (
+  contact: Omit<ContactType, "id">
+): Promise<ContactType> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({ ...contact, id: Date.now() });
@@ -33,7 +35,7 @@ export const addContact = (contact: Omit<Contact, "id">): Promise<Contact> => {
   });
 };
 
-export const updateContact = (contact: Contact): Promise<Contact> => {
+export const updateContact = (contact: ContactType): Promise<ContactType> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(contact);
