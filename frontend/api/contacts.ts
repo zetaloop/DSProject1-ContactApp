@@ -1,64 +1,78 @@
 import { ContactType } from "@/types";
 
-// Mock API
-export const fetchContacts = (): Promise<ContactType[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: 1,
-          name: "张三",
-          email: "zhangsan@example.com",
-          phone: "123-456-7890",
-          birthDate: "1990-01-01",
-          intro: "软件工程师",
-        },
-        {
-          id: 2,
-          name: "李四",
-          email: "lisi@example.com",
-          birthDate: "1985-05-15",
-          intro: "产品经理",
-        },
-      ]);
-    }, 500);
-  });
+// 前后端在同一域名和端口
+const API_BASE_URL = "";
+
+// 获取联系人列表
+export const fetchContacts = async (): Promise<ContactType[]> => {
+  const response = await fetch(`${API_BASE_URL}/contacts`);
+  if (!response.ok) {
+    throw new Error("获取联系人列表失败");
+  }
+  const data = await response.json();
+  return data;
 };
 
-export const addContact = (
+// 添加联系人
+export const addContact = async (
   contact: Omit<ContactType, "id">
 ): Promise<ContactType> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ ...contact, id: Date.now() });
-    }, 500);
+  const response = await fetch(`${API_BASE_URL}/contacts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(contact),
   });
+  if (!response.ok) {
+    throw new Error("添加联系人失败");
+  }
+  const data = await response.json();
+  return data;
 };
 
-export const updateContact = (contact: ContactType): Promise<ContactType> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(contact);
-    }, 500);
+// 更新联系人
+export const updateContact = async (
+  contact: ContactType
+): Promise<ContactType> => {
+  const response = await fetch(`${API_BASE_URL}/contacts/${contact.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(contact),
   });
+  if (!response.ok) {
+    throw new Error("更新联系人失败");
+  }
+  const data = await response.json();
+  return data;
 };
 
-export const deleteContact = (id: number): Promise<void> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 500);
+// 删除联系人
+export const deleteContact = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/contacts/${id}`, {
+    method: "DELETE",
   });
+  if (!response.ok) {
+    throw new Error("删除联系人失败");
+  }
 };
 
-export const uploadImage = (file: File): Promise<string> => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setTimeout(() => {
-        resolve(reader.result as string);
-      }, 500);
-    };
-    reader.readAsDataURL(file);
+// 上传图片
+export const uploadImage = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${API_BASE_URL}/upload`, {
+    method: "POST",
+    body: formData,
   });
+
+  if (!response.ok) {
+    throw new Error("图片上传失败");
+  }
+
+  const data = await response.json();
+  return data.url;
 };
