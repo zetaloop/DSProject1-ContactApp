@@ -46,7 +46,7 @@ const ContactPage = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     await deleteContact(id);
     setContacts(contacts.filter((c) => c.id !== id));
     toast({ title: "联系人已删除" });

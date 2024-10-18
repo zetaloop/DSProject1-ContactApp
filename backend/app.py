@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, send_from_directory
 import base64
 import os
 import sys
+import uuid
 
 
 class ContactNode:
@@ -74,7 +75,7 @@ contacts = ContactList()
 # 添加默认的测试数据
 contacts.append(
     {
-        "id": 1,
+        "id": str(uuid.uuid4()),
         "name": "张三",
         "email": "zhangsan@example.com",
         "phone": "123-456-7890",
@@ -84,15 +85,13 @@ contacts.append(
 )
 contacts.append(
     {
-        "id": 2,
+        "id": str(uuid.uuid4()),
         "name": "李四",
         "email": "lisi@example.com",
         "birthDate": "1985-05-15",
         "intro": "产品经理",
     }
 )
-
-current_id = 3  # 用于生成新的联系人 ID
 
 
 def create_app(static_folder):
@@ -106,18 +105,16 @@ def create_app(static_folder):
     # 添加联系人
     @app.route("/contacts", methods=["POST"])
     def add_contact():
-        global current_id
         contact = request.get_json()
         if not contact:
             return jsonify({"error": "请求体不能为空"}), 400
 
-        contact["id"] = current_id
-        current_id += 1
+        contact["id"] = str(uuid.uuid4())
         contacts.append(contact)
         return jsonify(contact), 201
 
     # 更新联系人
-    @app.route("/contacts/<int:id>", methods=["PUT"])
+    @app.route("/contacts/<string:id>", methods=["PUT"])
     def update_contact(id):
         contact_data = request.get_json()
         if not contact_data:
@@ -131,7 +128,7 @@ def create_app(static_folder):
         return jsonify(node.contact)
 
     # 删除联系人
-    @app.route("/contacts/<int:id>", methods=["DELETE"])
+    @app.route("/contacts/<string:id>", methods=["DELETE"])
     def delete_contact(id):
         node = contacts.find(id)
         if not node:

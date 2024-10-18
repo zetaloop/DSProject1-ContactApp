@@ -15,7 +15,7 @@ import { ContactType } from "@/types";
 interface ContactTableProps {
   contacts: ContactType[];
   onEdit: (contact: ContactType) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   onRowClick: (contact: ContactType) => void;
 }
 
