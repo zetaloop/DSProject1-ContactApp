@@ -1,4 +1,5 @@
 import { ContactType } from "@/types";
+import { v4 as uuidv4 } from 'uuid';
 
 // Mock API
 export const fetchContacts = (): Promise<ContactType[]> => {
@@ -6,7 +7,7 @@ export const fetchContacts = (): Promise<ContactType[]> => {
     setTimeout(() => {
       resolve([
         {
-          id: 1,
+          id: uuidv4(),
           name: "张三",
           email: "zhangsan@example.com",
           phone: "123-456-7890",
@@ -14,7 +15,7 @@ export const fetchContacts = (): Promise<ContactType[]> => {
           intro: "软件工程师",
         },
         {
-          id: 2,
+          id: uuidv4(),
           name: "李四",
           email: "lisi@example.com",
           birthDate: "1985-05-15",
@@ -30,7 +31,7 @@ export const addContact = (
 ): Promise<ContactType> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve({ ...contact, id: Date.now() });
+      resolve({ ...contact, id: uuidv4() });
     }, 500);
   });
 };
@@ -43,7 +44,7 @@ export const updateContact = (contact: ContactType): Promise<ContactType> => {
   });
 };
 
-export const deleteContact = (id: number): Promise<void> => {
+export const deleteContact = (id: string): Promise<void> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();

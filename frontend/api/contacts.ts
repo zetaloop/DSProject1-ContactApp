@@ -50,7 +50,7 @@ export const updateContact = async (
 };
 
 // 删除联系人
-export const deleteContact = async (id: number): Promise<void> => {
+export const deleteContact = async (id: string): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/contacts/${id}`, {
     method: "DELETE",
   });
