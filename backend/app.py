@@ -127,7 +127,7 @@ def create_app(static_folder):
         if not node:
             return jsonify({"error": "联系人未找到"}), 404
 
-        node.contact.update(contact_data)
+        node.contact = contact_data
         return jsonify(node.contact)
 
     # 删除联系人
