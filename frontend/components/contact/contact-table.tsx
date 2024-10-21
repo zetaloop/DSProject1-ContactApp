@@ -69,9 +69,6 @@ const SortableItem: React.FC<SortableItemProps> = ({
       className="cursor-pointer hover:bg-muted"
     >
       <TableCell>
-        <span>::</span>
-      </TableCell>
-      <TableCell>
         <Avatar>
           <AvatarImage src={contact.picture} alt={`${contact.name}的头像`} />
           <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
@@ -167,7 +164,6 @@ const ContactTable: React.FC<ContactTableProps> = ({
         <Table className="mt-4">
           <TableHeader>
             <TableRow>
-              <TableHead>拖拽</TableHead>
               <TableHead>头像</TableHead>
               <TableHead>姓名</TableHead>
               <TableHead>邮箱</TableHead>
