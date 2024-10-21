@@ -76,3 +76,17 @@ export const uploadImage = async (file: File): Promise<string> => {
   const data = await response.json();
   return data.url;
 };
+
+// 移动联系人
+export const moveContact = async (id: string, newPosition: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/contacts/move`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, new_position: newPosition }),
+  });
+  if (!response.ok) {
+    throw new Error("移动联系人失败");
+  }
+};

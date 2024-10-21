@@ -59,6 +59,39 @@ class ContactList:
         else:
             self.tail = node.prev
 
+    def move(self, contact_id, new_position):
+        """移动联系人到新位置"""
+        node = self.find(contact_id)
+        if not node:
+            return False
+
+        self.remove(node)
+
+        if new_position == 0:
+            node.next = self.head
+            if self.head:
+                self.head.prev = node
+            self.head = node
+            if not self.tail:
+                self.tail = node
+        else:
+            current = self.head
+            for _ in range(new_position - 1):
+                if not current:
+                    break
+                current = current.next
+
+            if current:
+                node.next = current.next
+                node.prev = current
+                if current.next:
+                    current.next.prev = node
+                current.next = node
+                if not node.next:
+                    self.tail = node
+
+        return True
+
     def to_list(self):
         """获取所有联系人"""
         contacts = []
@@ -136,6 +169,21 @@ def create_app(static_folder):
 
         contacts.remove(node)
         return "", 204
+
+    # 移动联系人
+    @app.route("/contacts/move", methods=["POST"])
+    def move_contact():
+        data = request.get_json()
+        if not data or "id" not in data or "new_position" not in data:
+            return jsonify({"error": "请求体不能为空"}), 400
+
+        contact_id = data["id"]
+        new_position = data["new_position"]
+
+        if contacts.move(contact_id, new_position):
+            return jsonify({"message": "联系人已移动"}), 200
+        else:
+            return jsonify({"error": "联系人未找到"}), 404
 
     # 上传图片
     @app.route("/upload", methods=["POST"])

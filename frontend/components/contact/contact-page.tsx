@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { onDragEnd } from "./contact-table"; // Import onDragEnd function
 
 const ContactPage = () => {
   const [contacts, setContacts] = useState<ContactType[]>([]);
@@ -122,6 +123,7 @@ const ContactPage = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onRowClick={handleRowClick}
+        onDragEnd={onDragEnd} // Pass onDragEnd function to ContactTable component
       />
       {detailedContact && (
         <ContactDetailDialog
