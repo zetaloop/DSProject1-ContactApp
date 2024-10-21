@@ -11,6 +11,7 @@ import {
   updateContact,
   deleteContact,
   uploadImage,
+  updateContactOrder,
 } from "@/api/contacts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -86,6 +87,12 @@ const ContactPage = () => {
     setIsFormOpen(false);
   };
 
+  const handleDragEnd = async (newOrder: ContactType[]) => {
+    setContacts(newOrder);
+    const newOrderIds = newOrder.map(contact => contact.id);
+    await updateContactOrder(newOrderIds);
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-4 space-y-4">
@@ -122,6 +129,7 @@ const ContactPage = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onRowClick={handleRowClick}
+        onDragEnd={handleDragEnd}
       />
       {detailedContact && (
         <ContactDetailDialog

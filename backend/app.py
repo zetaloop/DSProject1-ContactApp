@@ -61,12 +61,36 @@ class ContactList:
 
     def to_list(self):
         """获取所有联系人"""
+        nodes = []
+        current = self.head
+        while current:
+            nodes.append(current)
+            current = current.next
+        return nodes
+
+    def to_data(self):
+        """获取所有联系人数据"""
         contacts = []
         current = self.head
         while current:
             contacts.append(current.contact)
             current = current.next
         return contacts
+
+    def update_order(self, new_order):
+        """更新联系人顺序"""
+        id_to_node = {node.contact["id"]: node for node in self.to_list()}
+        self.head = self.tail = None
+        for contact_id in new_order:
+            node = id_to_node[contact_id]
+            if not self.head or not self.tail:
+                self.head = self.tail = node
+                node.prev = node.next = None
+            else:
+                self.tail.next = node
+                node.prev = self.tail
+                node.next = None
+                self.tail = node
 
 
 # 初始化联系人链表
@@ -100,7 +124,7 @@ def create_app(static_folder):
     # 获取联系人列表
     @app.route("/contacts", methods=["GET"])
     def get_contacts():
-        return jsonify(contacts.to_list())
+        return jsonify(contacts.to_data())
 
     # 添加联系人
     @app.route("/contacts", methods=["POST"])
@@ -149,6 +173,16 @@ def create_app(static_folder):
             data_url = f"data:{file.content_type};base64,{base64_data}"
             return jsonify({"url": data_url})
         return jsonify({"error": "文件上传失败"}), 400
+
+    # 更新联系人顺序
+    @app.route("/contacts/order", methods=["PUT"])
+    def update_contact_order():
+        new_order = request.get_json()
+        if not new_order:
+            return jsonify({"error": "请求体不能为空"}), 400
+
+        contacts.update_order(new_order)
+        return jsonify(contacts.to_data())
 
     # 默认路由，返回前端的入口页面（例如 index.html）
     @app.route("/", defaults={"path": ""})
