@@ -86,6 +86,10 @@ const ContactPage = () => {
     setIsFormOpen(false);
   };
 
+  const handleDragEnd = (newOrder: ContactType[]) => {
+    setContacts(newOrder);
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-4 space-y-4">
@@ -122,6 +126,7 @@ const ContactPage = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onRowClick={handleRowClick}
+        onDragEnd={handleDragEnd}
       />
       {detailedContact && (
         <ContactDetailDialog
