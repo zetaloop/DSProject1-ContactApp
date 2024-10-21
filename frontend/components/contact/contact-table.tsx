@@ -36,12 +36,20 @@ interface ContactTableProps {
   onDragEnd: (newOrder: ContactType[]) => void;
 }
 
-const SortableItem = ({
-  id,
-  children,
-}: {
+interface SortableItemProps {
   id: string;
-  children: React.ReactNode;
+  contact: ContactType;
+  onRowClick: (contact: ContactType) => void;
+  onEdit: (contact: ContactType) => void;
+  onDelete: (id: string) => void;
+}
+
+const SortableItem: React.FC<SortableItemProps> = ({
+  id,
+  contact,
+  onRowClick,
+  onEdit,
+  onDelete,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -52,8 +60,63 @@ const SortableItem = ({
   };
 
   return (
-    <TableRow ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {children}
+    <TableRow
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => onRowClick(contact)}
+      className="cursor-pointer hover:bg-muted"
+    >
+      <TableCell>
+        <span>::</span>
+      </TableCell>
+      <TableCell>
+        <Avatar>
+          <AvatarImage src={contact.picture} alt={`${contact.name}的头像`} />
+          <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
+        </Avatar>
+      </TableCell>
+      <TableCell>{contact.name}</TableCell>
+      <TableCell>{contact.email}</TableCell>
+      <TableCell className={contact.phone ? "" : "text-muted-foreground"}>
+        {contact.phone || "未提供"}
+      </TableCell>
+      <TableCell className={contact.birthDate ? "" : "text-muted-foreground"}>
+        {contact.birthDate
+          ? format(new Date(contact.birthDate), "yyyy-MM-dd", {
+              locale: zhCN,
+            })
+          : "未提供"}
+      </TableCell>
+      <TableCell
+        className={`max-w-xs truncate ${
+          contact.intro ? "" : "text-muted-foreground"
+        }`}
+      >
+        {contact.intro || "未提供"}
+      </TableCell>
+      <TableCell>
+        <Button
+          variant="outline"
+          className="mr-2"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(contact);
+          }}
+        >
+          编辑
+        </Button>
+        <Button
+          variant="destructive"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(contact.id);
+          }}
+        >
+          删除
+        </Button>
+      </TableCell>
     </TableRow>
   );
 };
@@ -116,66 +179,14 @@ const ContactTable: React.FC<ContactTableProps> = ({
           </TableHeader>
           <TableBody>
             {contacts.map((contact) => (
-              <SortableItem key={contact.id} id={contact.id}>
-                <TableRow onClick={() => onRowClick(contact)}>
-                  <TableCell>
-                    <span>::</span>
-                  </TableCell>
-                  <TableCell>
-                    <Avatar>
-                      <AvatarImage
-                        src={contact.picture}
-                        alt={`${contact.name}的头像`}
-                      />
-                      <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  </TableCell>
-                  <TableCell>{contact.name}</TableCell>
-                  <TableCell>{contact.email}</TableCell>
-                  <TableCell
-                    className={contact.phone ? "" : "text-muted-foreground"}
-                  >
-                    {contact.phone || "未提供"}
-                  </TableCell>
-                  <TableCell
-                    className={contact.birthDate ? "" : "text-muted-foreground"}
-                  >
-                    {contact.birthDate
-                      ? format(new Date(contact.birthDate), "yyyy-MM-dd", {
-                          locale: zhCN,
-                        })
-                      : "未提供"}
-                  </TableCell>
-                  <TableCell
-                    className={`max-w-xs truncate ${
-                      contact.intro ? "" : "text-muted-foreground"
-                    }`}
-                  >
-                    {contact.intro || "未提供"}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      className="mr-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(contact);
-                      }}
-                    >
-                      编辑
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(contact.id);
-                      }}
-                    >
-                      删除
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </SortableItem>
+              <SortableItem
+                key={contact.id}
+                id={contact.id}
+                contact={contact}
+                onRowClick={onRowClick}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
             ))}
           </TableBody>
         </Table>
