@@ -62,7 +62,7 @@ const ContactPage = () => {
     contactData: Omit<ContactType, "id">,
     selectedFile: File | null
   ) => {
-    let pictureUrl;
+    let pictureUrl = currentContact?.picture;
     if (selectedFile) {
       pictureUrl = await uploadImage(selectedFile);
     }
@@ -89,7 +89,7 @@ const ContactPage = () => {
 
   const handleDragEnd = async (newOrder: ContactType[]) => {
     setContacts(newOrder);
-    const newOrderIds = newOrder.map(contact => contact.id);
+    const newOrderIds = newOrder.map((contact) => contact.id);
     await updateContactOrder(newOrderIds);
   };
 
