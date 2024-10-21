@@ -87,6 +87,25 @@ const ContactPage = () => {
     setIsFormOpen(false);
   };
 
+  const handleDragEnd = async (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = contacts.findIndex((contact) => contact.id === active.id);
+      const newIndex = contacts.findIndex((contact) => contact.id === over.id);
+
+      const newContacts = arrayMove(contacts, oldIndex, newIndex);
+
+      setContacts(newContacts);
+
+      try {
+        await moveContact(active.id, newIndex);
+      } catch (error) {
+        console.error("Failed to move contact:", error);
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-4 space-y-4">
@@ -123,7 +142,7 @@ const ContactPage = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onRowClick={handleRowClick}
-        onDragEnd={onDragEnd} // Pass onDragEnd function to ContactTable component
+        onDragEnd={handleDragEnd} // Pass handleDragEnd function to ContactTable component
       />
       {detailedContact && (
         <ContactDetailDialog
