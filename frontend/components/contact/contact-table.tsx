@@ -18,6 +18,7 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -35,8 +36,15 @@ interface ContactTableProps {
   onDragEnd: (newOrder: ContactType[]) => void;
 }
 
-const SortableItem = ({ id, children }: { id: string; children: React.ReactNode }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+const SortableItem = ({
+  id,
+  children,
+}: {
+  id: string;
+  children: React.ReactNode;
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -71,10 +79,12 @@ const ContactTable: React.FC<ContactTableProps> = ({
     })
   );
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      const oldIndex = contacts.findIndex((contact) => contact.id === active.id);
+    if (over && active.id !== over.id) {
+      const oldIndex = contacts.findIndex(
+        (contact) => contact.id === active.id
+      );
       const newIndex = contacts.findIndex((contact) => contact.id === over.id);
       const newOrder = arrayMove(contacts, oldIndex, newIndex);
       onDragEnd(newOrder);
@@ -82,8 +92,15 @@ const ContactTable: React.FC<ContactTableProps> = ({
   };
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={contacts.map((contact) => contact.id)} strategy={verticalListSortingStrategy}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={contacts.map((contact) => contact.id)}
+        strategy={verticalListSortingStrategy}
+      >
         <Table className="mt-4">
           <TableHeader>
             <TableRow>
@@ -100,60 +117,64 @@ const ContactTable: React.FC<ContactTableProps> = ({
           <TableBody>
             {contacts.map((contact) => (
               <SortableItem key={contact.id} id={contact.id}>
-                <TableCell>
-                  <span>::</span>
-                </TableCell>
-                <TableCell>
-                  <Avatar>
-                    <AvatarImage
-                      src={contact.picture}
-                      alt={`${contact.name}的头像`}
-                    />
-                    <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                </TableCell>
-                <TableCell>{contact.name}</TableCell>
-                <TableCell>{contact.email}</TableCell>
-                <TableCell className={contact.phone ? "" : "text-muted-foreground"}>
-                  {contact.phone || "未提供"}
-                </TableCell>
-                <TableCell
-                  className={contact.birthDate ? "" : "text-muted-foreground"}
-                >
-                  {contact.birthDate
-                    ? format(new Date(contact.birthDate), "yyyy-MM-dd", {
-                        locale: zhCN,
-                      })
-                    : "未提供"}
-                </TableCell>
-                <TableCell
-                  className={`max-w-xs truncate ${
-                    contact.intro ? "" : "text-muted-foreground"
-                  }`}
-                >
-                  {contact.intro || "未提供"}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outline"
-                    className="mr-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEdit(contact);
-                    }}
+                <TableRow onClick={() => onRowClick(contact)}>
+                  <TableCell>
+                    <span>::</span>
+                  </TableCell>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarImage
+                        src={contact.picture}
+                        alt={`${contact.name}的头像`}
+                      />
+                      <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell>{contact.name}</TableCell>
+                  <TableCell>{contact.email}</TableCell>
+                  <TableCell
+                    className={contact.phone ? "" : "text-muted-foreground"}
                   >
-                    编辑
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete(contact.id);
-                    }}
+                    {contact.phone || "未提供"}
+                  </TableCell>
+                  <TableCell
+                    className={contact.birthDate ? "" : "text-muted-foreground"}
                   >
-                    删除
-                  </Button>
-                </TableCell>
+                    {contact.birthDate
+                      ? format(new Date(contact.birthDate), "yyyy-MM-dd", {
+                          locale: zhCN,
+                        })
+                      : "未提供"}
+                  </TableCell>
+                  <TableCell
+                    className={`max-w-xs truncate ${
+                      contact.intro ? "" : "text-muted-foreground"
+                    }`}
+                  >
+                    {contact.intro || "未提供"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      className="mr-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(contact);
+                      }}
+                    >
+                      编辑
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(contact.id);
+                      }}
+                    >
+                      删除
+                    </Button>
+                  </TableCell>
+                </TableRow>
               </SortableItem>
             ))}
           </TableBody>
