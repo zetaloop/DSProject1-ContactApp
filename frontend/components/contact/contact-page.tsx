@@ -11,6 +11,7 @@ import {
   updateContact,
   deleteContact,
   uploadImage,
+  updateContactOrder,
 } from "@/api/contacts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -86,8 +87,10 @@ const ContactPage = () => {
     setIsFormOpen(false);
   };
 
-  const handleDragEnd = (newOrder: ContactType[]) => {
+  const handleDragEnd = async (newOrder: ContactType[]) => {
     setContacts(newOrder);
+    const newOrderIds = newOrder.map(contact => contact.id);
+    await updateContactOrder(newOrderIds);
   };
 
   if (isLoading) {

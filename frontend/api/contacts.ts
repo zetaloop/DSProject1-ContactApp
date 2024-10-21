@@ -76,3 +76,19 @@ export const uploadImage = async (file: File): Promise<string> => {
   const data = await response.json();
   return data.url;
 };
+
+// 更新联系人顺序
+export const updateContactOrder = async (newOrder: string[]): Promise<ContactType[]> => {
+  const response = await fetch(`${API_BASE_URL}/contacts/order`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newOrder),
+  });
+  if (!response.ok) {
+    throw new Error("更新联系人顺序失败");
+  }
+  const data = await response.json();
+  return data;
+};
