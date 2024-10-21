@@ -61,6 +61,15 @@ class ContactList:
 
     def to_list(self):
         """获取所有联系人"""
+        nodes = []
+        current = self.head
+        while current:
+            nodes.append(current)
+            current = current.next
+        return nodes
+
+    def to_data(self):
+        """获取所有联系人数据"""
         contacts = []
         current = self.head
         while current:
@@ -115,7 +124,7 @@ def create_app(static_folder):
     # 获取联系人列表
     @app.route("/contacts", methods=["GET"])
     def get_contacts():
-        return jsonify(contacts.to_list())
+        return jsonify(contacts.to_data())
 
     # 添加联系人
     @app.route("/contacts", methods=["POST"])
@@ -173,7 +182,7 @@ def create_app(static_folder):
             return jsonify({"error": "请求体不能为空"}), 400
 
         contacts.update_order(new_order)
-        return jsonify(contacts.to_list())
+        return jsonify(contacts.to_data())
 
     # 默认路由，返回前端的入口页面（例如 index.html）
     @app.route("/", defaults={"path": ""})
