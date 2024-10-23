@@ -7,17 +7,18 @@ if not exist ..\frontend\out (
     exit /b 1
 )
 
+if not exist venv (
+    python -m venv venv
+    pip install -r requirements.txt
+)
+call venv\Scripts\activate.bat
+pip install -r requirements.txt
+
 if exist dist rmdir /s /q dist
 if exist build rmdir /s /q build
 
 if exist static rmdir /s /q static
-robocopy ..\frontend\out static /e
-
-if exist venv rmdir /s /q venv
-python -m venv venv
-
-call venv\Scripts\activate.bat
-pip install -r requirements.txt
+xcopy /s /e ..\frontend\out\ static\
 
 pyinstaller -D --add-data "./static:static" --icon "../favicon.ico" main.py
 
