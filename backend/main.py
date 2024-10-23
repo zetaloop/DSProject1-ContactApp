@@ -1,5 +1,6 @@
 import os
 import sys
+from server import create_app
 
 PORT = 8848
 
@@ -11,23 +12,6 @@ else:
     # Development mode
     STATICPATH = os.path.join(os.path.dirname(__file__), "../frontend/out")
     # ICONPATH = os.path.join(os.path.dirname(__file__), "../favicon.png")
-
-
-def start_server():
-    import server
-
-    static_folder_path = STATICPATH
-    production_mode = True
-
-    if not os.path.isabs(static_folder_path):
-        static_folder_path = os.path.abspath(static_folder_path)
-
-    if not os.path.exists(static_folder_path):
-        print(f"错误: 指定的静态文件路径不存在: {static_folder_path}")
-        sys.exit(1)
-
-    app = server.create_app(static_folder_path)
-    app.run(debug=not production_mode, port=PORT)
 
 
 def hide_console():
@@ -48,7 +32,18 @@ if __name__ == "__main__":
     import threading
     import webview
 
-    flask_thread = threading.Thread(target=start_server)
+    static_folder_path = STATICPATH
+    production_mode = True
+
+    if not os.path.isabs(static_folder_path):
+        static_folder_path = os.path.abspath(static_folder_path)
+
+    if not os.path.exists(static_folder_path):
+        print(f"错误: 指定的静态文件路径不存在: {static_folder_path}")
+        sys.exit(1)
+
+    app = create_app(static_folder_path)
+    flask_thread = threading.Thread(target=app.run, kwargs={"debug": not production_mode, "port": PORT})
     flask_thread.daemon = True  # 守护线程
     flask_thread.start()
 
