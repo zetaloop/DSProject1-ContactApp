@@ -9,11 +9,11 @@ PORT = 8848
 if getattr(sys, "frozen", False):
     # Pyinstaller package
     STATICPATH = os.path.join(sys._MEIPASS, "static")
-    ICONPATH = os.path.join(sys._MEIPASS, "icon.ico")
+    ICONPATH = os.path.join(sys._MEIPASS, "favicon.png")
 else:
     # Development mode
     STATICPATH = os.path.join(os.path.dirname(__file__), "../frontend/out")
-    ICONPATH = os.path.join(os.path.dirname(__file__), "../icon.ico")
+    ICONPATH = os.path.join(os.path.dirname(__file__), "../favicon.png")
 
 
 def start_server():
