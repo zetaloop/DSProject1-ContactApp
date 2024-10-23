@@ -7,6 +7,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Dependencies:
+- flask
+- pywebview
+- pyinstaller
+
 ### 2. Run the application
 ```bash
 python app.py
