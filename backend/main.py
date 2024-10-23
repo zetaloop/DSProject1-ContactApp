@@ -8,7 +8,7 @@ PORT = 8848
 
 if getattr(sys, "frozen", False):
     # Pyinstaller package
-    STATICPATH = os.path.join(sys._MEIPASS, "static")
+    STATICPATH = os.path.join(sys._MEIPASS, "static")  # type:ignore
     # ICONPATH = os.path.join(sys._MEIPASS, "favicon.png")
 else:
     # Development mode
