@@ -1,8 +1,5 @@
 import os
 import sys
-import threading
-import webview
-import server
 
 PORT = 8848
 
@@ -17,6 +14,8 @@ else:
 
 
 def start_server():
+    import server
+
     static_folder_path = STATICPATH
     production_mode = True
 
@@ -31,7 +30,24 @@ def start_server():
     app.run(debug=not production_mode, port=PORT)
 
 
+def hide_console():
+    """隐藏命令行窗口"""
+    if sys.platform == "win32":
+        import ctypes
+
+        print("正在启动窗口，请稍等...")
+        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hwnd != 0:
+            ctypes.windll.user32.ShowWindow(hwnd, 0)
+            ctypes.windll.kernel32.CloseHandle(hwnd)
+
+
 if __name__ == "__main__":
+    hide_console()
+
+    import threading
+    import webview
+
     flask_thread = threading.Thread(target=start_server)
     flask_thread.daemon = True  # 守护线程
     flask_thread.start()
