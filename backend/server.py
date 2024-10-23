@@ -4,6 +4,7 @@ import base64
 import os
 import sys
 import uuid
+import json
 
 
 class ContactNode:
@@ -93,29 +94,49 @@ class ContactList:
                 self.tail = node
 
 
-# 初始化联系人链表
-contacts = ContactList()
+def load_contacts(file_path):
+    """从 data.json 加载联系人"""
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+            contact_list = ContactList()
+            for contact in data:
+                contact_list.append(contact)
+            return contact_list
+    return None
 
-# 添加默认的测试数据
-contacts.append(
-    {
-        "id": str(uuid.uuid4()),
-        "name": "张三",
-        "email": "zhangsan@example.com",
-        "phone": "123-456-7890",
-        "birthDate": "1990-01-01",
-        "intro": "软件工程师",
-    }
-)
-contacts.append(
-    {
-        "id": str(uuid.uuid4()),
-        "name": "李四",
-        "email": "lisi@example.com",
-        "birthDate": "1985-05-15",
-        "intro": "产品经理",
-    }
-)
+
+def save_contacts(file_path, contact_list):
+    """保存联系人到 data.json"""
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(contact_list.to_data(), file, ensure_ascii=False, indent=4)
+
+
+# 初始化联系人链表
+contacts = load_contacts("./data.json")
+
+if not contacts:
+    contacts = ContactList()
+    # 添加默认的测试数据
+    contacts.append(
+        {
+            "id": str(uuid.uuid4()),
+            "name": "张三",
+            "email": "zhangsan@example.com",
+            "phone": "123-456-7890",
+            "birthDate": "1990-01-01",
+            "intro": "软件工程师",
+        }
+    )
+    contacts.append(
+        {
+            "id": str(uuid.uuid4()),
+            "name": "李四",
+            "email": "lisi@example.com",
+            "birthDate": "1985-05-15",
+            "intro": "产品经理",
+        }
+    )
 
 
 def create_app(static_folder):
@@ -135,6 +156,7 @@ def create_app(static_folder):
 
         contact["id"] = str(uuid.uuid4())
         contacts.append(contact)
+        save_contacts("./data.json", contacts)
         return jsonify(contact), 201
 
     # 更新联系人
@@ -149,6 +171,7 @@ def create_app(static_folder):
             return jsonify({"error": "联系人未找到"}), 404
 
         node.contact = contact_data
+        save_contacts("./data.json", contacts)
         return jsonify(node.contact)
 
     # 删除联系人
@@ -159,6 +182,7 @@ def create_app(static_folder):
             return jsonify({"error": "联系人未找到"}), 404
 
         contacts.remove(node)
+        save_contacts("./data.json", contacts)
         return "", 204
 
     # 上传图片
@@ -182,6 +206,7 @@ def create_app(static_folder):
             return jsonify({"error": "请求体不能为空"}), 400
 
         contacts.update_order(new_order)
+        save_contacts("./data.json", contacts)
         return jsonify(contacts.to_data())
 
     # 默认路由，返回前端的入口页面（例如 index.html）
