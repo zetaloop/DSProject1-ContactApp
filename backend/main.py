@@ -9,11 +9,11 @@ PORT = 8848
 if getattr(sys, "frozen", False):
     # Pyinstaller package
     STATICPATH = os.path.join(sys._MEIPASS, "static")
-    ICONPATH = os.path.join(sys._MEIPASS, "favicon.png")
+    # ICONPATH = os.path.join(sys._MEIPASS, "favicon.png")
 else:
     # Development mode
     STATICPATH = os.path.join(os.path.dirname(__file__), "../frontend/out")
-    ICONPATH = os.path.join(os.path.dirname(__file__), "../favicon.png")
+    # ICONPATH = os.path.join(os.path.dirname(__file__), "../favicon.png")
 
 
 def start_server():
@@ -37,4 +37,6 @@ if __name__ == "__main__":
     flask_thread.start()
 
     webview.create_window("联系人", f"http://127.0.0.1:{PORT}", width=1100, height=800)
-    webview.start(icon=ICONPATH)
+    # Windows pywebview 不支持自定义图标，其通过可执行文件指定图标
+    # webview.start(icon=ICONPATH)
+    webview.start()
