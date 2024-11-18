@@ -2,18 +2,15 @@
 
 ## 1. 安装依赖
 
-```bash
-python -m venv venv
-source venv/bin/activate
-# 对于 Windows:
-# venv\Scripts\activate
-pip install -r requirements.txt
-```
+请先准备好 [uv](https://docs.astral.sh/uv)
 
-依赖项:
-- flask
-- pywebview
-- pyinstaller
+然后创建并进入虚拟环境
+```bash
+uv sync
+source .venv/bin/activate
+# 对于 Windows:
+# .venv\Scripts\activate
+```
 
 ## 2. 运行应用程序
 

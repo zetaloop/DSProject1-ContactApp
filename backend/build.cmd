@@ -2,17 +2,19 @@
 setlocal
 cd %~dp0
 
+where uv
+if %errorlevel% neq 0 (
+    echo "Please install uv"
+    exit /b 1
+)
+
 if not exist ..\frontend\out (
     echo "Please build frontend first"
     exit /b 1
 )
 
-if not exist venv (
-    python -m venv venv
-    pip install -r requirements.txt
-)
-call venv\Scripts\activate.bat
-pip install -r requirements.txt
+uv sync
+call .venv\Scripts\activate.bat
 
 if exist dist rmdir /s /q dist
 if exist build rmdir /s /q build
