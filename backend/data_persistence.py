@@ -1,6 +1,8 @@
 import json
 import os
+import uuid
 from contact_list import ContactList
+
 
 def load_contacts(file_path):
     """从 data.json 加载联系人"""
@@ -11,7 +13,29 @@ def load_contacts(file_path):
             for contact in data:
                 contact_list.append(contact)
             return contact_list
-    return None
+    contacts = ContactList()
+    # 添加默认的测试数据
+    contacts.append(
+        {
+            "id": str(uuid.uuid4()),
+            "name": "张三",
+            "email": "zhangsan@example.com",
+            "phone": "123-456-7890",
+            "birthDate": "1990-01-01",
+            "intro": "软件工程师",
+        }
+    )
+    contacts.append(
+        {
+            "id": str(uuid.uuid4()),
+            "name": "李四",
+            "email": "lisi@example.com",
+            "birthDate": "1985-05-15",
+            "intro": "产品经理",
+        }
+    )
+    return contacts
+
 
 def save_contacts(file_path, contact_list):
     """保存联系人到 data.json"""

@@ -4,34 +4,10 @@ import base64
 import os
 import sys
 import uuid
-from contact_list import ContactList
 from data_persistence import load_contacts, save_contacts
 
 # 初始化联系人链表
 contacts = load_contacts("./data.json")
-
-if not contacts:
-    contacts = ContactList()
-    # 添加默认的测试数据
-    contacts.append(
-        {
-            "id": str(uuid.uuid4()),
-            "name": "张三",
-            "email": "zhangsan@example.com",
-            "phone": "123-456-7890",
-            "birthDate": "1990-01-01",
-            "intro": "软件工程师",
-        }
-    )
-    contacts.append(
-        {
-            "id": str(uuid.uuid4()),
-            "name": "李四",
-            "email": "lisi@example.com",
-            "birthDate": "1985-05-15",
-            "intro": "产品经理",
-        }
-    )
 
 
 def create_app(static_folder):
@@ -120,6 +96,7 @@ def create_app(static_folder):
 
 # 启动应用
 if __name__ == "__main__":
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     static_folder_path = "../frontend/out"  # 默认静态文件路径
     production_mode = False  # 默认开发模式
 
