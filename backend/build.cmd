@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 setlocal
 cd %~dp0
 
@@ -13,7 +14,9 @@ if not exist ..\frontend\out (
     exit /b 1
 )
 
-uv sync
+if not exist .venv (
+    uv sync
+)
 call .venv\Scripts\activate.bat
 
 if exist dist rmdir /s /q dist
