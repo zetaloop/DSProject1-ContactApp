@@ -5,6 +5,7 @@ import os
 import sys
 import uuid
 from data_persistence import load_contacts, save_contacts
+from contact_list import ContactList
 
 # 初始化联系人链表
 contacts = load_contacts("./data.json")
@@ -41,6 +42,7 @@ def create_app(static_folder):
         if not node:
             return jsonify({"error": "联系人未找到"}), 404
 
+        contact_data["id"] = id  # 确保ID不变
         node.contact = contact_data
         save_contacts("./data.json", contacts)
         return jsonify(node.contact)
@@ -56,27 +58,62 @@ def create_app(static_folder):
         save_contacts("./data.json", contacts)
         return "", 204
 
-    # 上传图片
-    @app.route("/upload", methods=["POST"])
-    def upload_image():
+    # 上传联系人图片
+    @app.route("/contacts/<string:id>/image", methods=["POST"])
+    def upload_image(id):
+        node = contacts.find(id)
+        if not node:
+            return jsonify({"error": "联系人未找到"}), 404
+
         if "file" not in request.files:
             return jsonify({"error": "未上传文件"}), 400
+
         file = request.files["file"]
         if file:
             data = file.read()
             base64_data = base64.b64encode(data).decode("utf-8")
             data_url = f"data:{file.content_type};base64,{base64_data}"
+            node.contact["image"] = data_url
+            save_contacts("./data.json", contacts)
             return jsonify({"url": data_url})
         return jsonify({"error": "文件上传失败"}), 400
 
     # 更新联系人顺序
-    @app.route("/contacts/order", methods=["PUT"])
+    @app.route("/contacts", methods=["PATCH"])
     def update_contact_order():
         new_order = request.get_json()
         if not new_order:
             return jsonify({"error": "请求体不能为空"}), 400
 
+        if not isinstance(new_order, list):
+            return jsonify({"error": "请求体应为ID列表"}), 400
+
         contacts.update_order(new_order)
+        save_contacts("./data.json", contacts)
+        return jsonify(contacts.to_data())
+
+    # 移动联系人位置
+    @app.route("/contacts/<string:id>/position", methods=["PUT"])
+    def move_contact(id):
+        position_data = request.get_json()
+        if not position_data:
+            return jsonify({"error": "请求体不能为空"}), 400
+
+        target_id = position_data.get("target_id")
+        position = position_data.get("position")  # "before" 或 "after"
+        if not target_id or position not in ["before", "after"]:
+            return jsonify({"error": "请求参数不正确"}), 400
+
+        node_to_move = contacts.find(id)
+        target_node = contacts.find(target_id)
+        if not node_to_move or not target_node:
+            return jsonify({"error": "联系人未找到"}), 404
+
+        if position == "before":
+            contacts.move_before(node_to_move, target_node)
+        elif position == "after":
+            contacts.move_after(node_to_move, target_node)
+
         save_contacts("./data.json", contacts)
         return jsonify(contacts.to_data())
 
