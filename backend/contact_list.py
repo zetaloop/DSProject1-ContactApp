@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 class ContactNode:
     """联系人节点"""
 
@@ -54,7 +55,7 @@ class ContactList:
             self.tail = node.prev
 
     def to_list(self):
-        """获取所有联系人"""
+        """获取所有联系人节点列表"""
         nodes = []
         current = self.head
         while current:
@@ -63,11 +64,18 @@ class ContactList:
         return nodes
 
     def to_data(self):
-        """获取所有联系人数据"""
+        """获取所有联系人数据，包含前后关系"""
         contacts = []
         current = self.head
         while current:
-            contacts.append(current.contact)
+            contact_data = current.contact.copy()
+            contact_data["prev_id"] = (
+                current.prev.contact["id"] if current.prev else None
+            )
+            contact_data["next_id"] = (
+                current.next.contact["id"] if current.next else None
+            )
+            contacts.append(contact_data)
             current = current.next
         return contacts
 
@@ -76,12 +84,47 @@ class ContactList:
         id_to_node = {node.contact["id"]: node for node in self.to_list()}
         self.head = self.tail = None
         for contact_id in new_order:
-            node = id_to_node[contact_id]
+            node = id_to_node.get(contact_id)
+            if not node:
+                continue  # 如果ID不存在，跳过或可选择抛出异常
+            node.prev = node.next = None  # 重置节点的前后指针
             if not self.head or not self.tail:
                 self.head = self.tail = node
-                node.prev = node.next = None
             else:
                 self.tail.next = node
                 node.prev = self.tail
-                node.next = None
                 self.tail = node
+
+    def insert_before(self, target_node, new_node):
+        """在指定节点之前插入新节点"""
+        new_node.prev = target_node.prev
+        new_node.next = target_node
+        if target_node.prev:
+            target_node.prev.next = new_node
+        else:
+            self.head = new_node
+        target_node.prev = new_node
+
+    def insert_after(self, target_node, new_node):
+        """在指定节点之后插入新节点"""
+        new_node.next = target_node.next
+        new_node.prev = target_node
+        if target_node.next:
+            target_node.next.prev = new_node
+        else:
+            self.tail = new_node
+        target_node.next = new_node
+
+    def move_before(self, node_to_move, target_node):
+        """将节点移动到另一个节点之前"""
+        if node_to_move == target_node:
+            return  # 无需移动
+        self.remove(node_to_move)
+        self.insert_before(target_node, node_to_move)
+
+    def move_after(self, node_to_move, target_node):
+        """将节点移动到另一个节点之后"""
+        if node_to_move == target_node:
+            return  # 无需移动
+        self.remove(node_to_move)
+        self.insert_after(target_node, node_to_move)
