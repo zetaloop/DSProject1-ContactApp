@@ -154,7 +154,11 @@ const ContactTable: React.FC<ContactTableProps> = ({
       const newIndex = contacts.findIndex((contact) => contact.id === over.id);
       const newOrder = arrayMove(contacts, oldIndex, newIndex);
       onDragEnd(newOrder);
-      onMoveContact(active.id, over.id, oldIndex < newIndex ? "after" : "before");
+      onMoveContact(
+        active.id,
+        over.id,
+        oldIndex < newIndex ? "after" : "before"
+      );
     }
   };
 

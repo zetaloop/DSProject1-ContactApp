@@ -78,7 +78,9 @@ export const uploadImage = async (id: string, file: File): Promise<string> => {
 };
 
 // 更新联系人顺序
-export const updateContactOrder = async (newOrder: string[]): Promise<ContactType[]> => {
+export const updateContactOrder = async (
+  newOrder: string[]
+): Promise<ContactType[]> => {
   const response = await fetch(`${API_BASE_URL}/contacts`, {
     method: "PATCH",
     headers: {
