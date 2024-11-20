@@ -60,11 +60,11 @@ export const deleteContact = async (id: string): Promise<void> => {
 };
 
 // 上传图片
-export const uploadImage = async (file: File): Promise<string> => {
+export const uploadImage = async (id: string, file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(`${API_BASE_URL}/upload`, {
+  const response = await fetch(`${API_BASE_URL}/contacts/${id}/image`, {
     method: "POST",
     body: formData,
   });
@@ -79,8 +79,8 @@ export const uploadImage = async (file: File): Promise<string> => {
 
 // 更新联系人顺序
 export const updateContactOrder = async (newOrder: string[]): Promise<ContactType[]> => {
-  const response = await fetch(`${API_BASE_URL}/contacts/order`, {
-    method: "PUT",
+  const response = await fetch(`${API_BASE_URL}/contacts`, {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
@@ -88,6 +88,26 @@ export const updateContactOrder = async (newOrder: string[]): Promise<ContactTyp
   });
   if (!response.ok) {
     throw new Error("更新联系人顺序失败");
+  }
+  const data = await response.json();
+  return data;
+};
+
+// 移动联系人位置
+export const moveContact = async (
+  id: string,
+  targetId: string,
+  position: "before" | "after"
+): Promise<ContactType[]> => {
+  const response = await fetch(`${API_BASE_URL}/contacts/${id}/position`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ target_id: targetId, position }),
+  });
+  if (!response.ok) {
+    throw new Error("移动联系人位置失败");
   }
   const data = await response.json();
   return data;

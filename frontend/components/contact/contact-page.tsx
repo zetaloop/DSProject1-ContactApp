@@ -12,6 +12,7 @@ import {
   deleteContact,
   uploadImage,
   updateContactOrder,
+  moveContact,
 } from "@/api/contacts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,8 +64,8 @@ const ContactPage = () => {
     selectedFile: File | null
   ) => {
     let pictureUrl = currentContact?.picture;
-    if (selectedFile) {
-      pictureUrl = await uploadImage(selectedFile);
+    if (selectedFile && currentContact) {
+      pictureUrl = await uploadImage(currentContact.id, selectedFile);
     }
     if (currentContact) {
       const updatedContact = await updateContact({
@@ -91,6 +92,15 @@ const ContactPage = () => {
     setContacts(newOrder);
     const newOrderIds = newOrder.map((contact) => contact.id);
     await updateContactOrder(newOrderIds);
+  };
+
+  const handleMoveContact = async (
+    id: string,
+    targetId: string,
+    position: "before" | "after"
+  ) => {
+    const updatedContacts = await moveContact(id, targetId, position);
+    setContacts(updatedContacts);
   };
 
   if (isLoading) {
@@ -130,6 +140,7 @@ const ContactPage = () => {
         onDelete={handleDelete}
         onRowClick={handleRowClick}
         onDragEnd={handleDragEnd}
+        onMoveContact={handleMoveContact}
       />
       {detailedContact && (
         <ContactDetailDialog

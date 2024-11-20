@@ -34,6 +34,11 @@ interface ContactTableProps {
   onDelete: (id: string) => void;
   onRowClick: (contact: ContactType) => void;
   onDragEnd: (newOrder: ContactType[]) => void;
+  onMoveContact: (
+    id: string,
+    targetId: string,
+    position: "before" | "after"
+  ) => void;
 }
 
 interface SortableItemProps {
@@ -124,6 +129,7 @@ const ContactTable: React.FC<ContactTableProps> = ({
   onDelete,
   onRowClick,
   onDragEnd,
+  onMoveContact,
 }) => {
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -148,6 +154,7 @@ const ContactTable: React.FC<ContactTableProps> = ({
       const newIndex = contacts.findIndex((contact) => contact.id === over.id);
       const newOrder = arrayMove(contacts, oldIndex, newIndex);
       onDragEnd(newOrder);
+      onMoveContact(active.id, over.id, oldIndex < newIndex ? "after" : "before");
     }
   };
 
