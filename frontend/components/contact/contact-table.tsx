@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Table,
   TableBody,
@@ -19,6 +20,8 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -139,13 +142,19 @@ const ContactTable: React.FC<ContactTableProps> = ({
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250,
-        tolerance: 5,
+        distance: 10,
       },
     })
   );
 
+  const [activeId, setActiveId] = React.useState<string | number | null>(null);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
     const { active, over } = event;
     if (over && active.id !== over.id) {
       const oldIndex = contacts.findIndex(
@@ -166,6 +175,7 @@ const ContactTable: React.FC<ContactTableProps> = ({
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <SortableContext
@@ -198,6 +208,17 @@ const ContactTable: React.FC<ContactTableProps> = ({
           </TableBody>
         </Table>
       </SortableContext>
+      <DragOverlay>
+        {activeId ? (
+          <SortableItem
+            id={String(activeId)}
+            contact={contacts.find((contact) => contact.id === activeId)!}
+            onRowClick={onRowClick}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 };
