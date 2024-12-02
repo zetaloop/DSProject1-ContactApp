@@ -29,6 +29,7 @@ interface ContactFormProps {
     contactData: Omit<ContactType, "id">,
     selectedFile: File | null
   ) => void;
+  onDeleteImage: (id: string) => Promise<void>;
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({
@@ -36,6 +37,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
   onClose,
   currentContact,
   onSave,
+  onDeleteImage,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -64,7 +66,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
         ? format(selectedDate, "yyyy-MM-dd", { locale: zhCN })
         : undefined,
       intro: (formData.get("intro") as string) || undefined,
-      picture: currentContact?.picture,
+      picture: selectedFile ? undefined : currentContact?.picture,
       id: currentContact?.id,
     };
 
@@ -105,7 +107,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                 {currentContact?.name?.charAt(0) || "A"}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex space-x-2">
               <Label htmlFor="picture" className="cursor-pointer">
                 <Input
                   id="picture"
@@ -122,6 +124,23 @@ const ContactForm: React.FC<ContactFormProps> = ({
                   </span>
                 </Button>
               </Label>
+              {(currentContact?.picture || selectedFile) && (
+                <Button
+                  variant="destructive"
+                  type="button"
+                  onClick={async () => {
+                    if (currentContact?.id && currentContact.picture) {
+                      await onDeleteImage(currentContact.id);
+                    }
+                    setSelectedFile(null);
+                    if (currentContact) {
+                      currentContact.picture = undefined;
+                    }
+                  }}
+                >
+                  删除图片
+                </Button>
+              )}
             </div>
           </div>
           <div>

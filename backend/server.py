@@ -117,6 +117,19 @@ def create_app(static_folder):
         save_contacts("./data.json", contacts)
         return jsonify(contacts.to_data())
 
+    # 删除联系人图片
+    @app.route("/contacts/<string:id>/image", methods=["DELETE"])
+    def delete_image(id):
+        node = contacts.find(id)
+        if not node:
+            return jsonify({"error": "联系人未找到"}), 404
+
+        if "picture" in node.contact:
+            del node.contact["picture"]
+            save_contacts("./data.json", contacts)
+            return "", 204
+        return jsonify({"error": "联系人没有图片"}), 404
+
     # 默认路由，返回前端的入口页面（例如 index.html）
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")

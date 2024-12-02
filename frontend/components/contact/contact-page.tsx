@@ -13,6 +13,7 @@ import {
   uploadImage,
   updateContactOrder,
   moveContact,
+  deleteImage,
 } from "@/api/contacts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,29 +64,45 @@ const ContactPage = () => {
     contactData: Omit<ContactType, "id">,
     selectedFile: File | null
   ) => {
-    let pictureUrl = currentContact?.picture;
-    if (selectedFile && currentContact) {
-      pictureUrl = await uploadImage(currentContact.id, selectedFile);
-    }
-    if (currentContact) {
-      const updatedContact = await updateContact({
-        ...contactData,
-        id: currentContact.id,
-        picture: pictureUrl,
+    try {
+      let pictureUrl = contactData.picture;
+
+      if (currentContact) {
+        // 更新现有联系人
+        if (selectedFile) {
+          pictureUrl = await uploadImage(currentContact.id, selectedFile);
+        }
+        const updatedContact = await updateContact({
+          ...contactData,
+          id: currentContact.id,
+          picture: pictureUrl,
+        });
+        setContacts(
+          contacts.map((c) => (c.id === updatedContact.id ? updatedContact : c))
+        );
+        toast({ title: "联系人已更新" });
+      } else {
+        // 添加新联系人
+        const newContact = await addContact({
+          ...contactData,
+          picture: undefined, // 新建时先不设置图片
+        });
+        if (selectedFile) {
+          pictureUrl = await uploadImage(newContact.id, selectedFile);
+          newContact.picture = pictureUrl;
+          await updateContact(newContact);
+        }
+        setContacts([...contacts, newContact]);
+        toast({ title: "联系人已添加" });
+      }
+      setIsFormOpen(false);
+    } catch (error) {
+      toast({
+        title: "操作失败",
+        description: (error as Error).message,
+        variant: "destructive",
       });
-      setContacts(
-        contacts.map((c) => (c.id === updatedContact.id ? updatedContact : c))
-      );
-      toast({ title: "联系人已更新" });
-    } else {
-      const newContact = await addContact({
-        ...contactData,
-        picture: pictureUrl,
-      });
-      setContacts([...contacts, newContact]);
-      toast({ title: "联系人已添加" });
     }
-    setIsFormOpen(false);
   };
 
   const handleDragEnd = async (newOrder: ContactType[]) => {
@@ -101,6 +118,14 @@ const ContactPage = () => {
   ) => {
     const updatedContacts = await moveContact(id, targetId, position);
     setContacts(updatedContacts);
+  };
+
+  const handleDeleteImage = async (id: string) => {
+    await deleteImage(id);
+    setContacts(
+      contacts.map((c) => (c.id === id ? { ...c, picture: undefined } : c))
+    );
+    toast({ title: "头像已删除" });
   };
 
   if (isLoading) {
@@ -133,6 +158,7 @@ const ContactPage = () => {
         onClose={() => setIsFormOpen(false)}
         currentContact={currentContact}
         onSave={handleSave}
+        onDeleteImage={handleDeleteImage}
       />
       <ContactTable
         contacts={contacts}

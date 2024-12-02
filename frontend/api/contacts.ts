@@ -114,3 +114,13 @@ export const moveContact = async (
   const data = await response.json();
   return data;
 };
+
+// 删除联系人图片
+export const deleteImage = async (id: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/contacts/${id}/image`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error("删除图片失败");
+  }
+};
