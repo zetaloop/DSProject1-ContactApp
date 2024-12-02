@@ -25,6 +25,6 @@ if exist build rmdir /s /q build
 if exist static rmdir /s /q static
 xcopy /s /e ..\frontend\out\ static\
 
-pyinstaller -D --add-data "./static:static" --icon "../favicon.ico" main.py
+pyinstaller -D --noconsole --add-data "./static:static" --icon "../favicon.ico" main.py
 
 pause
