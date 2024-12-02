@@ -26,6 +26,21 @@ def hide_console():
             ctypes.windll.kernel32.CloseHandle(hwnd)
 
 
+def is_dark_mode():
+    """检查 Windows 是否处于深色模式"""
+    try:
+        import winreg
+
+        registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+        key = winreg.OpenKey(
+            registry, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+        )
+        value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+        return value == 0
+    except:
+        return False
+
+
 if __name__ == "__main__":
     hide_console()
 
@@ -43,11 +58,19 @@ if __name__ == "__main__":
         sys.exit(1)
 
     app = create_app(static_folder_path)
-    flask_thread = threading.Thread(target=app.run, kwargs={"debug": not production_mode, "port": PORT})
+    flask_thread = threading.Thread(
+        target=app.run, kwargs={"debug": not production_mode, "port": PORT}
+    )
     flask_thread.daemon = True  # 守护线程
     flask_thread.start()
 
-    webview.create_window("联系人", f"http://127.0.0.1:{PORT}", width=1100, height=800)
+    webview.create_window(
+        "联系人",
+        f"http://127.0.0.1:{PORT}",
+        width=1100,
+        height=800,
+        background_color="#09090b" if is_dark_mode() else "#ffffff",
+    )
     # Windows pywebview 不支持自定义图标，其通过可执行文件指定图标
     # webview.start(icon=ICONPATH)
     webview.start()
