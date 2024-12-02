@@ -43,10 +43,15 @@ const ContactForm: React.FC<ContactFormProps> = ({
   );
 
   useEffect(() => {
-    setSelectedDate(
-      currentContact?.birthDate ? new Date(currentContact.birthDate) : undefined
-    );
-  }, [currentContact]);
+    if (isOpen) {
+      setSelectedDate(
+        currentContact?.birthDate
+          ? new Date(currentContact.birthDate)
+          : undefined
+      );
+      setSelectedFile(null);
+    }
+  }, [isOpen, currentContact]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -64,10 +69,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
     };
 
     await onSave(contactData, selectedFile);
-
-    onClose();
-    setSelectedFile(null);
-    setSelectedDate(undefined);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,8 +77,14 @@ const ContactForm: React.FC<ContactFormProps> = ({
     }
   };
 
+  const handleClose = () => {
+    onClose();
+    setSelectedFile(null);
+    setSelectedDate(undefined);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -171,7 +178,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
                   />
                 </PopoverContent>
               </Popover>
-              {/* 清除日期按钮 */}
               <Button
                 variant="outline"
                 type="button"
@@ -189,9 +195,14 @@ const ContactForm: React.FC<ContactFormProps> = ({
               defaultValue={currentContact?.intro || ""}
             />
           </div>
-          <Button variant="outline" type="submit">
-            保存
-          </Button>
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" type="button" onClick={handleClose}>
+              取消
+            </Button>
+            <Button variant="default" type="submit">
+              保存
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
