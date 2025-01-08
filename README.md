@@ -1,4 +1,6 @@
-# 联系人管理应用
+# 联系人管理应用（课程作业）
+
+<img width="600" alt="Snipaste_2025-01-08_10-36-51" src="https://github.com/user-attachments/assets/1fb2b650-cba5-4b21-9c97-bc837194f3f4" />
 
 这是一个现代化的联系人管理应用，采用前后端分离架构，具有以下特点：
 
